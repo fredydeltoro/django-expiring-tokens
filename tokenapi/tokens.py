@@ -1,8 +1,8 @@
 """django.contrib.auth.tokens, but without using last_login in hash"""
 
-from datetime import date
+from datetime import datetime
 from django.conf import settings
-from django.utils.http import int_to_base36, base36_to_int
+from models import Token
 
 class TokenGenerator(object):
     """
@@ -15,51 +15,46 @@ class TokenGenerator(object):
         """
         Returns a token for a given user
         """
-        return self._make_token_with_timestamp(user, self._num_days(self._today()))
+        return self._make_token_with_timestamp(user, self._now())
+
+    def delete_token(self, user):
+        try:
+            token = Token.objects.get(user=user)
+            token.delete()
+        except Token.DoesNotExist:
+            pass
+        return True
 
     def check_token(self, user, token):
         """
         Check that a token is correct for a given user.
         """
-        # Parse the token
         try:
-            ts_b36, hash = token.split("-")
-        except ValueError:
+            valid_token = Token.get(user=user)
+        except Token.DoesNotExist:
             return False
 
-        try:
-            ts = base36_to_int(ts_b36)
-        except ValueError:
+        if valid_token.hash == token:
+            return True
+        else:
             return False
-
-        # Check that the timestamp/uid has not been tampered with
-        if self._make_token_with_timestamp(user, ts) != token:
-            return False
-
-        # Check the timestamp is within limit
-        if (self._num_days(self._today()) - ts) > self.TOKEN_TIMEOUT_DAYS:
-            return False
-
-        return True
 
     def _make_token_with_timestamp(self, user, timestamp):
-        # timestamp is number of days since 2001-1-1.  Converted to
-        # base 36, this gives us a 3 digit string until about 2121
-        ts_b36 = int_to_base36(timestamp)
 
-        # No longer using last login time
         from django.utils.hashcompat import sha_constructor
         hash = sha_constructor(settings.SECRET_KEY + unicode(user.id) +
             user.password + 
             unicode(timestamp)).hexdigest()[::2]
-        return "%s-%s" % (ts_b36, hash)
 
-    def _num_days(self, dt):
-        return (dt - date(2001,1,1)).days
+        self.delete_token(user)
 
-    def _today(self):
+        token = Token(user = user, hash = hash)
+        token.save()
+        return hash
+
+    def _now(self):
         # Used for mocking in tests
-        return date.today()
+        return datetime.today()
 
 
 token_generator = TokenGenerator()
