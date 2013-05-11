@@ -27,7 +27,10 @@ def token_required(view_func):
             token = request.REQUEST.get('token')
 
         if user and token:
-            user = authenticate(pk=user, token=token)
+            try:
+                user = authenticate(pk=user, token=token)
+            except:
+                raise HttpResponseForbidden
             if user:
                 login(request, user)
                 return view_func(request, *args, **kwargs)
