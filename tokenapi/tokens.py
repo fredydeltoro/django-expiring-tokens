@@ -30,7 +30,7 @@ class TokenGenerator(object):
         Check that a token is correct for a given user.
         """
         try:
-            valid_token = Token.get(user=user)
+            valid_token = Token.objects.get(user=user)
         except Token.DoesNotExist:
             return False
 
