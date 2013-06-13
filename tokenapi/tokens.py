@@ -19,8 +19,8 @@ class TokenGenerator(object):
 
     def delete_token(self, user):
         try:
-            token = Token.objects.get(user=user)
-            token.delete()
+            tokens = Token.objects.filter(user=user)
+            tokens.delete()
         except Token.DoesNotExist:
             pass
         return True
