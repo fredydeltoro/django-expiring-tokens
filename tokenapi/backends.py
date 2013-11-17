@@ -8,7 +8,7 @@ class TokenBackend(ModelBackend):
     def authenticate(self, pk, token):
         try:
             user = User.objects.get(pk=pk)
-        except User.DoesNotExist:
+        except:
             return None
 
         TOKEN_CHECK_ACTIVE_USER = getattr(settings, "TOKEN_CHECK_ACTIVE_USER", False)
