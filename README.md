@@ -1,56 +1,15 @@
-django-tokenapi
+django-expiring tokens
 ================
 
-This is a Django application which allows you to create simple APIs
-that use token-based authentication. You can easily open up existing views
-to the API by adding a single decorator.
+This Django application provides token-based authentication for your APIs. By default, creating a new token for a user
+invalidates all existing tokens for that user.
 
-This is useful if you want to create applications on mobile devices which
-connect to your Django website, but where only your clients are expected to
-access the API.
+This application is based on jpulgarian's [django-tokenapi](https://github.com/jpulgarin/django-tokenapi). In the
+django-tokenapi implementation, tokens are based on a timestamp and timeout and are not stored in the database. This
+has some advantages, but makes it impossible to invalidate tokens before they expire.
 
-If instead you are looking to open up an API to the public, you are better off
-going with a framework with OAuth support, of which there exist some really
-good [implementations](https://bitbucket.org/jespern/django-piston/wiki/Home).
-
-Installation
-------------
-
-First obtain `tokenapi` package and place it somewhere on your PYTHONPATH, for example
-in your project directory (where settings.py is).
-
-Alternatively, if you are
-using some sort of virtual environment, like [virtualenv][], you can perform a
-regular installation or use [pip][]:
-
-    python setup.py install
-
-    # or ...
-
-    pip install django-tokenapi
-
-[virtualenv]: http://pypi.python.org/pypi/virtualenv
-[pip]: http://pip.openplans.org/
-
-Add `tokenapi` to your `INSTALLED_APPS`.
-
-Ensure that `django.contrib.auth.backends.ModelBackend` is in your `AUTHENTICATION_BACKENDS`.
-
-Add `tokenapi.backends.TokenBackend` to your `AUTHENTICATION_BACKENDS`.
-
-Include `tokenapi.urls` in your `urls.py`. It will look something like this:
-
-    urlpatterns = patterns('',
-        (r'', include('tokenapi.urls')),
-    )
-
-Configuration
--------------
-
-You can change the number of days that a token is valid for by setting
-`TOKEN_TIMEOUT_DAYS` in `settings.py`. The default is `7`.
-
-By default, the authentication logic will not check if the user's `is_active` flag is set to `True`. To only allow active users to authenticate set `TOKEN_CHECK_ACTIVE_USER` to `True` in `settings.py`.
+django-expiring-tokens solves this problem by storing tokens in the database. By default, creating a new token for a
+user invalidates any existing tokens for that use. You can also manually invalidate a token by deleting it.
 
 Usage
 -----
@@ -138,5 +97,5 @@ Authorization header, the Authorization header will be used for authentication.
 Acknowledgements
 ----------------
 
-The token generating code is from `django.contrib.auth.tokens`, but modified so
-that it does not hash on a user's last login.
+Based heavily on jpulgarian's [django-tokenapi](https://github.com/jpulgarin/django-tokenapi), which is in turn based on
+`django.contrib.auth.tokens`.
