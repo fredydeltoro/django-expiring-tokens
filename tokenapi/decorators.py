@@ -1,11 +1,14 @@
-from django.http import HttpResponseForbidden
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
 
 try:
     from functools import wraps
 except ImportError:
     from django.utils.functional import wraps # Python 2.4 fallback
+
+class HttpResponseUnauthorized(HttpResponse):
+    status_code = 401
 
 def token_required(view_func):
     """Decorator which ensures the user has provided a correct user and token pair."""
@@ -34,5 +37,5 @@ def token_required(view_func):
             if user:
                 login(request, user)
                 return view_func(request, *args, **kwargs)
-        return HttpResponseForbidden()
+        return HttpResponseUnauthorized()
     return _wrapped_view
