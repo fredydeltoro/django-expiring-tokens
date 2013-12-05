@@ -1,4 +1,4 @@
-django-expiring tokens
+django-expiring-tokens
 ================
 
 This Django application provides token-based authentication for your APIs. By default, creating a new token for a user

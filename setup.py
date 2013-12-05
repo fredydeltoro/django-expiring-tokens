@@ -5,13 +5,13 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name='django-tokenapi',
-    version='0.1.6',
-    description='Add an API to your Django app using token-based authentication.',
+    name='django-expiring-tokens',
+    version='0.1.1',
+    description='Add an API to your Django app using token-based authentication. Tokens expire on subsequent logins.',
     long_description=read('README.md'),
-    author='Julian Pulgarin',
-    author_email='jp@julianpulgarin.com',
-    url='https://github.com/jpulgarin/django-tokenapi',
+    author='Stephen Hebson',
+    author_email='stephen.hebson@gmail.com',
+    url='https://github.com/shebson/django-expiring-tokens',
     packages=['tokenapi'],
     license='Apache License, Version 2.0',
 )
