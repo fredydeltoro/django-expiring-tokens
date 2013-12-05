@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from django.core.exceptions import PermissionDenied
 
 try:
     from functools import wraps
@@ -33,7 +34,7 @@ def token_required(view_func):
             try:
                 user = authenticate(pk=user, token=token)
             except:
-                raise HttpResponseForbidden
+                raise PermissionDenied()
             if user:
                 login(request, user)
                 return view_func(request, *args, **kwargs)
