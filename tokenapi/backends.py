@@ -7,8 +7,12 @@ from django.conf import settings
 class TokenBackend(ModelBackend):
     def authenticate(self, pk, token):
         try:
+            pl = int(pk)
+        except ValueError:
+            return None
+        try:
             user = User.objects.get(pk=pk)
-        except:
+        except User.DoesNotExist:
             return None
 
         TOKEN_CHECK_ACTIVE_USER = getattr(settings, "TOKEN_CHECK_ACTIVE_USER", False)

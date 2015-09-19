@@ -31,10 +31,7 @@ def token_required(view_func):
             token = request.REQUEST.get('token')
 
         if user and token:
-            try:
-                user = authenticate(pk=user, token=token)
-            except:
-                raise PermissionDenied()
+            user = authenticate(pk=user, token=token)
             if user:
                 login(request, user)
                 return view_func(request, *args, **kwargs)

@@ -6,7 +6,7 @@ def read(fname):
 
 setup(
     name='django-expiring-tokens',
-    version='0.1.1',
+    version='0.1.2',
     description='Add an API to your Django app using token-based authentication. Tokens expire on subsequent logins.',
     long_description=read('README.md'),
     author='Stephen Hebson',
