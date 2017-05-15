@@ -30,20 +30,21 @@ class TokenGenerator(object):
         Check that a token is correct for a given user.
         """
         try:
-            valid_token = Token.objects.get(user=user)
+            valid_tokens = Token.objects.filter(user=user)
         except Token.DoesNotExist:
             return False
 
-        if valid_token.hash == token:
-            return True
-        else:
-            return False
+        for valid_token in valid_tokens:
+            if valid_token.hash == token:
+                return True
+                
+        return False
 
     def _make_token_with_timestamp(self, user, timestamp):
 
         from django.utils.hashcompat import sha_constructor
         hash = sha_constructor(settings.SECRET_KEY + unicode(user.id) +
-            user.password + 
+            user.password +
             unicode(timestamp)).hexdigest()[::2]
 
         self.delete_token(user)
