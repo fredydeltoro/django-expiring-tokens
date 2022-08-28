@@ -42,7 +42,11 @@ class TokenGenerator(object):
 
     def _make_token_with_timestamp(self, user, timestamp):
 
-        from django.utils.hashcompat import sha_constructor
+        try:
+            from hashlib import sha1 as sha_constructor
+        except ImportError:
+            from django.utils.hashcompat import sha_constructor
+
         hash = sha_constructor(settings.SECRET_KEY + unicode(user.id) +
             user.password +
             unicode(timestamp)).hexdigest()[::2]
