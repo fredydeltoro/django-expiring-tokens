@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from django.conf import settings
-from models import Token
+from .models import Token
 
 class TokenGenerator(object):
     """
@@ -46,10 +46,12 @@ class TokenGenerator(object):
             from hashlib import sha1 as sha_constructor
         except ImportError:
             from django.utils.hashcompat import sha_constructor
-
-        hash = sha_constructor(settings.SECRET_KEY + unicode(user.id) +
+        
+        h_string = (settings.SECRET_KEY + str(user.id).encode('utf-8').decode('utf-8') +
             user.password +
-            unicode(timestamp)).hexdigest()[::2]
+            str(timestamp).encode('utf-8').decode('utf-8'))
+
+        hash = sha_constructor(h_string.encode('utf-8')).hexdigest()[::2]
 
         self.delete_token(user)
 
