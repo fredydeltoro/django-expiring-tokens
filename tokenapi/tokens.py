@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from django.conf import settings
-from models import Token
+from .models import Token
 
 class TokenGenerator(object):
     """
